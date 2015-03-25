@@ -1,0 +1,12 @@
+*.suo
+*.user
+Metacoder.Host/bin/
+Metacoder.Host/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+Metacoder.Host/obj/
+Metacoder.Interfaces/obj/
+Metacoder.Sample/obj/
+Metacoder.Sample/bin/
+Metacoder/bin/
+Metacoder/obj/
+packages/
+Metacoder.Interfaces/bin/
