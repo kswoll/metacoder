@@ -1,4 +1,4 @@
-
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -29,6 +29,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,7 +47,10 @@
     <Compile Include="TestModel.cs" />
     <Compile Include="Transformers\NotifyPropertyChangeTransformer.cs" />
     <Compile Include="Transformers\PropertyAttribute.cs" />
-  <Compile Include="TestModel.Generated.cs"><DependentUpon>TestModel.cs</DependentUpon></Compile></ItemGroup>
+    <Compile Include="TestModel.Generated.cs">
+      <DependentUpon>TestModel.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Metacoder.Interfaces\Metacoder.Interfaces.csproj">
       <Project>{e485d28c-8bc4-48ba-b625-78edccd15109}</Project>

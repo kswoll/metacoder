@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Metacoder.Host.TypeWrappers
 {
-    public struct TypeWrapper : IType
+    public struct TypeWrapper : IType, IMember
     {
         private Compilation compilation;
         private ITypeSymbol symbol;
@@ -21,6 +21,11 @@ namespace Metacoder.Host.TypeWrappers
         public string Name
         {
             get { return symbol.Name; }
+        }
+
+        public IEnumerable<IAttribute> Attributes
+        {
+            get { return SymbolHelper.GetAttributes(compilation, symbol); }
         }
 
         public string Namespace
@@ -69,6 +74,30 @@ namespace Metacoder.Host.TypeWrappers
                     {
                         var field = (IFieldSymbol)member;
                         var wrapper = new FieldWrapper(compilation, field);
+                        yield return wrapper;
+                    }
+                    else if (member is IMethodSymbol)
+                    {
+                        var method = (IMethodSymbol)member;
+                        var wrapper = new MethodWrapper(compilation, method);
+                        yield return wrapper;
+                    }
+                    else if (member is IPropertySymbol)
+                    {
+                        var property = (IPropertySymbol)member;
+                        var wrapper = new PropertyWrapper(compilation, property);
+                        yield return wrapper;
+                    }
+                    else if (member is IEventSymbol)
+                    {
+                        var @event = (IEventSymbol)member;
+                        var wrapper = new EventWrapper(compilation, @event);
+                        yield return wrapper;
+                    }
+                    else if (member is ITypeSymbol)
+                    {
+                        var type = (ITypeSymbol)member;
+                        var wrapper = new TypeWrapper(compilation, type);
                         yield return wrapper;
                     }
                 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Metacoder.Host.Utils;
 using Metacoder.Interfaces;
 
 namespace Metacoder
@@ -21,43 +22,47 @@ namespace Metacoder
 
         private void Install()
         {
-            var tempFolderPath = Path.GetRandomFileName();
-            var tempRoot = Directory.GetCurrentDirectory();
-            var installFolder = new FileInfo(typeof(HostContainer).Assembly.Location).Directory;
-            tempFolder = new DirectoryInfo(Path.Combine(tempRoot, tempFolderPath));
-
-            // In the case of a rare collision, re-try the install with a new temp folder
-            if (tempFolder.Exists)
+            Profiler.Time("Installing...", () =>
             {
-                Install();
-                return;
-            }
+                var tempFolderPath = Path.GetRandomFileName();
+                var tempRoot = Directory.GetCurrentDirectory();
+                var installFolder = new FileInfo(typeof(HostContainer).Assembly.Location).Directory;
+                tempFolder = new DirectoryInfo(Path.Combine(tempRoot, tempFolderPath));
 
-            tempFolder.Create();
+                // In the case of a rare collision, re-try the install with a new temp folder
+                if (tempFolder.Exists)
+                {
+                    Install();
+                    return;
+                }
 
-            // Copy all the assemblies of Metacoder into tempFolder
-            foreach (var file in installFolder.GetFiles())
-            {
-                if (!file.Name.EndsWith(".exe"))
-                    file.CopyTo(Path.Combine(tempFolder.FullName, file.Name));
-            }
+                tempFolder.Create();
 
-            var targetProjectAssemblyFile = new FileInfo(targetProjectAssembly);
-            var targetProjectFolder = targetProjectAssemblyFile.Directory;
-            foreach (var file in targetProjectFolder.GetFiles())
-            {
-                var destination = new FileInfo(Path.Combine(tempFolder.FullName, file.Name));
-                if (!destination.Exists)
-                    file.CopyTo(destination.FullName);
-            }
+                // Copy all the assemblies of Metacoder into tempFolder
+                foreach (var file in installFolder.GetFiles())
+                {
+                    if (!file.Name.EndsWith(".exe"))
+                        file.CopyTo(Path.Combine(tempFolder.FullName, file.Name));
+                }
 
-            appDomain = AppDomain.CreateDomain("MetacoderHostContainer", AppDomain.CurrentDomain.Evidence, tempFolder.FullName, ".", true);            
+                var targetProjectAssemblyFile = new FileInfo(targetProjectAssembly);
+                var targetProjectFolder = targetProjectAssemblyFile.Directory;
+                foreach (var file in targetProjectFolder.GetFiles())
+                {
+                    var destination = new FileInfo(Path.Combine(tempFolder.FullName, file.Name));
+                    if (!destination.Exists)
+                        file.CopyTo(destination.FullName);
+                }
+
+                appDomain = AppDomain.CreateDomain("MetacoderHostContainer", AppDomain.CurrentDomain.Evidence, tempFolder.FullName, ".", true);            
+                
+            });
         }
 
         public void Run()
         {
             var host = (IHost)appDomain.CreateInstanceFromAndUnwrap(Path.Combine(tempFolder.FullName, "Metacoder.Host.dll"), "Metacoder.Host.MetacoderHost", null);
-            host.Run(projectFile);
+            Profiler.Time("Executed host", () => host.Run(projectFile));
         }
 
         public void Dispose()

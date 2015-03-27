@@ -113,9 +113,14 @@
     <Compile Include="TypeCollector.cs" />
     <Compile Include="TypeWrappers\AssemblyWrapper.cs" />
     <Compile Include="TypeWrappers\AttributeWrapper.cs" />
+    <Compile Include="TypeWrappers\EventWrapper.cs" />
     <Compile Include="TypeWrappers\FieldWrapper.cs" />
-    <Compile Include="TypeWrappers\SymbolWrapper.cs" />
+    <Compile Include="TypeWrappers\MethodWrapper.cs" />
+    <Compile Include="TypeWrappers\ParameterWrapper.cs" />
+    <Compile Include="TypeWrappers\PropertyWrapper.cs" />
+    <Compile Include="TypeWrappers\SymbolHelper.cs" />
     <Compile Include="TypeWrappers\TypeWrapper.cs" />
+    <Compile Include="Utils\Profiler.cs" />
     <Compile Include="Utils\RoslynExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

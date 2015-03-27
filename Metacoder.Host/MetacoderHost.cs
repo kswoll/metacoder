@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Threading.Tasks;
+using Metacoder.Host.Utils;
 using Metacoder.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
@@ -22,19 +23,25 @@ namespace Metacoder.Host
         {
             AsyncContext.Run(async () =>
             {
-                var workspace = MSBuildWorkspace.Create();
-                var project = await workspace.OpenProjectAsync(projectFile);
+                var workspace = Profiler.Time("Creating workspace", () => MSBuildWorkspace.Create());
+                var project = await Profiler.Time("Opening project", async () => await workspace.OpenProjectAsync(projectFile));
                 var assembly = Assembly.Load(project.AssemblyName);
                 var transformers = assembly.GetTypes().Where(x => typeof(IMetacoder).IsAssignableFrom(x)).ToArray();
                 var transformationContext = new TransformationContext(workspace, project, await project.GetCompilationAsync());
 
-                foreach (var transformerType in transformers)
+                Profiler.Time("Running transformers", () =>
                 {
-                    var transformer = (IMetacoder)Activator.CreateInstance(transformerType);
-                    transformer.Transform(transformationContext);
-                }
+                    foreach (var transformerType in transformers)
+                    {
+                        var transformer = (IMetacoder)Activator.CreateInstance(transformerType);
+                        transformer.Transform(transformationContext);
+                    }                    
+                });
 
-                transformationContext.Finish();
+                Profiler.Time("Applying changes", () =>
+                {
+                    transformationContext.Finish();
+                });
             });
         }
     }
