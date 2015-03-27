@@ -16,7 +16,7 @@ First, your "template" class:
 
 Here's we've defined an attribute, `PropertyAttribute` that is just a naked attribute we're using to mark the fields for which we want properties generated.
 
-Next we need to define the generator.  This is a class that implements the interface `IMetacoder`:
+Next we need to define the generator.  This is a class that lives in the same project that implements the interface `IMetacoder`:
 
     public class NotifyPropertyChangeMetacoder : IMetacoder
     {
