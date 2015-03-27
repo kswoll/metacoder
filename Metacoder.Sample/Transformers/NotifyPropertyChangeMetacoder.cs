@@ -5,7 +5,7 @@ using Metacoder.Interfaces;
 
 namespace Metacoder.Sample.Transformers
 {
-    public class NotifyPropertyChangeTransformer : IMetacoder
+    public class NotifyPropertyChangeMetacoder : IMetacoder
     {
         private const string template = @"
 namespace {0}
@@ -26,12 +26,8 @@ namespace {0}
 
         public void Transform(ITransformationContext context)
         {
-            foreach (var modelType in context.ProjectTypes.Where(x => !x.IsAbstract && x.Is<AbstractModel>()))
+            foreach (var modelType in context.ProjectTypes.Where(x => !x.IsAbstract && x.Members.OfType<IField>().Any(y => y.HasAttribute<PropertyAttribute>())))
             {
-                var location = modelType.Locations.Single(x => !x.EndsWith(".Generated.cs"));
-                var newLocation = location.Substring(0, location.LastIndexOf('.'));
-                newLocation += ".Generated.cs";
-
                 var propertiesBuilder = new StringBuilder();
                 foreach (var propertyField in modelType.Members.OfType<IField>().Where(x => x.HasAttribute<PropertyAttribute>()))
                 {
@@ -41,7 +37,7 @@ namespace {0}
 
                 var content = string.Format(template, modelType.Namespace, modelType.Name, propertiesBuilder);
 
-                context.CreateOrUpdateFile(newLocation, content, Path.GetFileName(location));
+                context.DeriveFile(modelType, "Generated", content);
             }
         }
     }

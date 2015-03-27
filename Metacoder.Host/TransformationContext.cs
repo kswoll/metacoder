@@ -61,6 +61,15 @@ namespace Metacoder.Host
             }
         }
 
+        public void DeriveFile(IType type, string suffix, string content)
+        {
+            var location = type.Locations.OrderBy(x => x.Length).First();
+            var newLocation = location.Substring(0, location.LastIndexOf('.'));
+            newLocation += "." + suffix + ".cs";
+            
+            CreateOrUpdateFile(newLocation, content, Path.GetFileName(location));
+        }
+
         public void CreateOrUpdateFile(string location, string content, string dependsOn = null)
         {
             var documentId = project.Solution.GetDocumentIdsWithFilePath(location).Single();
