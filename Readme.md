@@ -1,6 +1,8 @@
 Metacoder
 ---------
 
+To install, use Nuget:  https://www.nuget.org/packages/metacoder/
+
 Metacoder is a Roslyn based tool that allows you to write classes that will take C# code you've written and allow you to generate classes based on that.  
 
 For example, you could declare fields in your class and generate the notify property changed properties around it.  To illustrate, let's look at a simple example that merely takes your fields and generates simple getters and setters for them in a generated partial class. 
