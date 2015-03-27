@@ -59,6 +59,8 @@ Next we need to define the generator.  This is a class that lives in the same pr
         }
     }
 
+The `IMetacoder` interface defines one method, `Transform`, providing you with a context from which you can interrogate the your types, properties, methods, etc. of your project.  Using this information, we are generating a class (by building a string) and writing the output to the project via `context.CreateOrUpdateFile`.
+
 Finally, upon building your project, it will generate the following output (alongside your existing `TestModel`, adding it to the project if necessary):
 
     public partial class TestModel
