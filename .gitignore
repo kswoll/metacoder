@@ -10,3 +10,4 @@ Metacoder/bin/
 Metacoder/obj/
 packages/
 Metacoder.Interfaces/bin/
+*.nupkg
